@@ -81,3 +81,5 @@ class network(object):
         return (output_activations-y)
     
 
+    def predict(self, x):
+        return np.argmax(self.feedforward(x))

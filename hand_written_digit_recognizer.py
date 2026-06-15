@@ -32,17 +32,23 @@ def show_images(images, title_texts):
         index += 1
 
 
-images_to_show = []
-titles_to_show = []
-for i in range(0, 10):
-    r = random.randint(1, 60000)
-    images_to_show.append(x_train[r])
-    titles_to_show.append('training image [' + str(r) + '] = ' + str(y_train[r]))    
+# images_to_show = []
+# titles_to_show = []
+# for i in range(0, 10):
+#     r = random.randint(1, 60000)
+#     images_to_show.append(x_train[r])
+#     titles_to_show.append('training image [' + str(r) + '] = ' + str(y_train[r]))    
 
-for i in range(0, 5):
-    r = random.randint(1, 10000)
-    images_to_show.append(x_test[r])        
-    titles_to_show.append('test image [' + str(r) + '] = ' + str(y_test[r]))    
+# for i in range(0, 5):
+#     r = random.randint(1, 10000)
+#     images_to_show.append(x_test[r])        
+#     titles_to_show.append('test image [' + str(r) + '] = ' + str(y_test[r]))    
 
-show_images(images_to_show, titles_to_show)
-plt.show()
+# show_images(images_to_show, titles_to_show)
+# plt.show()
+
+
+net = network([784, 30, 10])
+training_data = list(zip(x_train, y_train))
+test_data = list(zip(x_test, y_test))
+net.SGD(training_data, 30, 10, 3.0, test_data=test_data)
