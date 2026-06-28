@@ -16,6 +16,34 @@ class network(object):
         return self.sigmoid(z)*(1-self.sigmoid(z))
 
 
+    def ReLu(self, z):
+        return np.maximum(0, z)
+
+
+    def save(self, filename):
+        import json
+        data = {
+            "sizes": self.sizes,
+            "weights": [w.tolist() for w in self.weights],
+            "biases": [b.tolist() for b in self.biases]
+        }
+        with open(filename, "w") as f:
+            json.dump(data, f)
+        print(f"Network successfully saved to {filename}")
+
+
+    def load(self, filename):
+        import json
+        with open(filename, "r") as f:
+            data = json.load(f)
+        
+        self.sizes = data["sizes"]
+        self.num_layers = len(self.sizes)
+        self.weights = [np.array(w) for w in data["weights"]]
+        self.biases = [np.array(b) for b in data["biases"]]
+        print(f"Network successfully loaded from {filename}")
+
+
     def feedforward(self, a):
         for b,w in zip(self.biases, self.weights):
             a=self.sigmoid(np.dot(w,a)+b)
@@ -32,9 +60,9 @@ class network(object):
             for mini_batch in mini_batches:
                 self.update_mini_batch(mini_batch, eta)
             if test_data:
-                print("Epoch {j}: {self.evaluate(test_data)} / {n_test}")
+                print(f"Epoch {j}: {self.evaluate(test_data)} / {n_test}")
             else:
-                print("Epoch {j} complete")
+                print(f"Epoch {j} complete")
     
 
     def update_mini_batch(self, mini_batch, eta):
@@ -43,7 +71,7 @@ class network(object):
         for x,y in mini_batch:
             delta_nabla_b, delta_nabla_w=self.backprop(x,y)
             nabla_b=[nb+dnb for nb,dnb in zip(nabla_b, delta_nabla_b)]
-            nabla_W=[nw+dnw for nw,dnw in zip(nabla_w, delta_nabla_W)]
+            nabla_w=[nw+dnw for nw,dnw in zip(nabla_w, delta_nabla_w)]
         self.weights=[w-(eta/len(mini_batch))*nw for w,nw in zip(self.weights, nabla_w)]
         self.biases=[b-(eta/len(mini_batch))*nb for b,nb in zip(self.biases, nabla_b)]
 
@@ -73,8 +101,8 @@ class network(object):
 
 
     def evaluate(self, test_data):
-        test_results=[np.argmax(self.feedforward(x)) for (x,y) in test_data]
-        return sum(int(x==y) for (x,y) in test_results)
+        test_results = [(np.argmax(self.feedforward(x)), np.argmax(y) if isinstance(y, np.ndarray) else y) for x, y in test_data]
+        return sum(int(pred == y) for pred, y in test_results)
     
 
     def cost_derivative(self, output_activations, y):

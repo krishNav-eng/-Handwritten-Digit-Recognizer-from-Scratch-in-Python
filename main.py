@@ -17,6 +17,12 @@ mnist_dataloader = MnistDataLoader(training_images_filepath, training_labels_fil
 (x_train, y_train), (x_test, y_test) = mnist_dataloader.load_data()
 
 
+x_train = [np.reshape(x, (784, 1)) for x in x_train]
+y_train = [np.eye(10)[y].reshape(10, 1) for y in y_train]
+x_test = [np.reshape(x, (784, 1)) for x in x_test]
+y_test = [np.eye(10)[y].reshape(10, 1) for y in y_test]
+
+
 net = network([784, 30, 10])
 training_data = list(zip(x_train, y_train))
 test_data = list(zip(x_test, y_test))
@@ -68,6 +74,7 @@ img = img / 255.0
 
 # shape according to your model
 img = img.reshape(1, 28, 28, 1)
+img = img.reshape(784, 1)
 
 prediction = net.predict(img)
 print(prediction)
